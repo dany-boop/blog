@@ -25,7 +25,7 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
-        'roles',
+        'role_id',
         'password',
 
     ];
@@ -66,13 +66,8 @@ class User extends Authenticatable
         return $this->hasMany('App\Models\Post');
     }
 
-    public function isUser()
+    public function role()
     {
-        return in_array('user', explode(',', $this->roles));
-    }
-
-    public function isAuthor()
-    {
-        return in_array('author', explode(',', $this->roles));
+        return $this->belongsTo(Role::class);
     }
 }

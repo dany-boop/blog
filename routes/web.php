@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\RegisterController;
 
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\PostController;
@@ -20,7 +21,7 @@ use App\Http\Controllers\PostController;
 //     return view('welcome');
 // });
 
-Route::group(['middleware' => ['auth:sanctum', 'verified', 'role:author']], function () {
+Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
     Route::get('/dashboard', function () {
         return Inertia\Inertia::render('Dashboard');
     })->name('dashboard');
@@ -28,11 +29,24 @@ Route::group(['middleware' => ['auth:sanctum', 'verified', 'role:author']], func
     Route::resource('posts', PostController::class);
 });
 
-Route::group(['middleware' => ['auth:sanctum', 'verified', 'role:user']], function () {
-    Route::get('/dashboard', function () {
-        return Inertia\Inertia::render('DashboardUser');
-    })->name('dashboard');
-});
+Route::get('/register', [RegisterController::class, 'create'])
+    ->middleware(['guest'])
+    ->name('register');
+
+Route::post('/register', [RegisterController::class, 'store'])
+    ->middleware(['guest']);
+
+// Route::group(['middleware' => 'auth'], function () {
+//     Route::group(['middleware' => 'role:student', 'prefix' => 'student', 'as' => 'student.'], function () {
+//         Route::resource('lessons', \App\Http\Controllers\Students\LessonController::class);
+//     });
+//     Route::group(['middleware' => 'role:teacher', 'prefix' => 'teacher', 'as' => 'teacher.'], function () {
+//         Route::resource('courses', \App\Http\Controllers\Teachers\CourseController::class);
+//     });
+// });
+
+
+
 
 Route::get('/', [BlogController::class, 'index'])->name('blog_posts');
 Route::get('/{slug}', [BlogController::class, 'show'])->name('blog_post');

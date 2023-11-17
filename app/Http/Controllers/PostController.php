@@ -24,7 +24,7 @@ class PostController extends Controller
             ->with('categories:slug,name')
             ->orderBy('created_at', 'desc')
             ->paginate(10);
-        
+
         return Inertia::render('Posts/Index', ['posts' => $posts]);
     }
 
@@ -48,7 +48,7 @@ class PostController extends Controller
             'category_ids' => [
                 'required',
                 'array',
-                'min:2',
+                'min:1',
             ],
             'tags_input' => [
                 'string'
@@ -66,7 +66,7 @@ class PostController extends Controller
         if ($params['status'] == POST::ACTIVE) {
             $params['published_at'] = now();
         }
-        
+
         $tags = explode(',', $params['tags_input']);
         $tagIds = [];
         foreach ($tags as $tag) {
@@ -92,7 +92,7 @@ class PostController extends Controller
 
             if ($path) {
                 $resizedImages = $this->resizeImage($image, $fileName, $folder);
-                
+
                 $imagesPath = array_merge([
                     'original' => $path,
                 ], $resizedImages);
@@ -104,7 +104,8 @@ class PostController extends Controller
         return redirect('/posts')->with('message', 'Post created successfully.');
     }
 
-    private function resizeImage($image, $fileName, $folder) {
+    private function resizeImage($image, $fileName, $folder)
+    {
         $resizedImage = [];
 
         $smallImageFilePath = $folder . '/small/' . $fileName;
@@ -114,7 +115,7 @@ class PostController extends Controller
         if (\Storage::put('public/' . $smallImageFilePath, $smallImageFile)) {
             $resizedImage['small'] = $smallImageFilePath;
         }
-        
+
         $mediumImageFilePath = $folder . '/medium/' . $fileName;
         $size = explode('x', Image::MEDIUM);
         list($width, $height) = $size;
@@ -134,7 +135,8 @@ class PostController extends Controller
         return $resizedImage;
     }
 
-    public function edit($id){
+    public function edit($id)
+    {
         $post = Post::findOrFail($id);
         $categories = Category::orderBy('name', 'asc')->get();
 
@@ -149,7 +151,8 @@ class PostController extends Controller
         ]);
     }
 
-    public function update(Request $request, $id) {
+    public function update(Request $request, $id)
+    {
         $post = Post::findOrFail($id);
         if ($post->user_id != Auth::user()->id) {
             return redirect('/posts')->with('message', 'You can not edit this post.');
@@ -166,7 +169,7 @@ class PostController extends Controller
             'category_ids' => [
                 'required',
                 'array',
-                'min:2',
+                'min:1',
             ],
             'tags_input' => [
                 'string'
@@ -205,7 +208,7 @@ class PostController extends Controller
                 $post->images()->delete();
 
                 $resizedImages = $this->resizeImage($image, $fileName, $folder);
-                
+
                 $imagesPath = array_merge([
                     'original' => $path,
                 ], $resizedImages);

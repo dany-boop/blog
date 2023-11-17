@@ -7,13 +7,15 @@ use Illuminate\Http\Request;
 
 class CheckRole
 {
-    public function handle(Request $request, Closure $next, ...$roles)
+    public function handle(Request $request, Closure $next, string $role)
     {
-        // Check if the user has one of the specified roles
-        if (auth()->user()->roles !== 'author') {
-            return redirect()->route('dashboard');
+        if ($role == 'author' && auth()->user()->role_id != 1) {
+            abort(403);
         }
 
+        if ($role == 'user' && auth()->user()->role_id != 2) {
+            abort(403);
+        }
         return $next($request);
     }
 }

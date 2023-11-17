@@ -20,11 +20,20 @@
                 <x-jet-input class="block mt-1 w-full" type="email" name="email" :value="old('email')" required />
             </div>
             <div class="mt-4">
-                <x-jet-label value="Roles" />
-                <select name="roles[]" class="block mt-1 w-full" id="roles" required>
-                    <option value="user" {{ old('roles') == 'user' ? 'selected' : '' }}>User</option>
-                    <option value="author" {{ old('roles') == 'author' ? 'selected' : '' }}>Author</option>
+                <x-jet-label value="{{ __('Register as:') }}" />
+                <select name="role_id" x-model="role_id"
+                    class="block mt-1 w-full border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm"
+                    id="roles" required>
+                    @foreach ($roles as $role)
+                        <option value="{{ $role->id }}">{{ $role->name }}</option>
+                    @endforeach
                 </select>
+
+                @error('role')
+                    <span class="invalid-feedback" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                @enderror
             </div>
 
 
